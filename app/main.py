@@ -68,7 +68,6 @@ def add_sidebar():
 
 def get_scaled_values(input_dict):
   data = get_clean_data()
-  
   X = data.drop(['diagnosis'], axis=1)
   
   scaled_dict = {}
@@ -142,9 +141,23 @@ def add_predictions(input_data):
   model = pickle.load(open("model/model.pkl", "rb"))
   scaler = pickle.load(open("model/scaler.pkl", "rb"))
   
-  input_array = np.array(list(input_data.values())).reshape(1, -1)
+  # Define feature column order (same as training)
+  columns = [
+        'radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean',
+        'compactness_mean', 'concavity_mean', 'concave points_mean', 'symmetry_mean', 'fractal_dimension_mean',
+        'radius_se', 'texture_se', 'perimeter_se', 'area_se', 'smoothness_se',
+        'compactness_se', 'concavity_se', 'concave points_se', 'symmetry_se', 'fractal_dimension_se',
+        'radius_worst', 'texture_worst', 'perimeter_worst', 'area_worst', 'smoothness_worst',
+        'compactness_worst', 'concavity_worst', 'concave points_worst', 'symmetry_worst', 'fractal_dimension_worst'
+  ]
   
-  input_array_scaled = scaler.transform(input_array)
+  # Convert input to DataFrame to avoid warning
+  input_df = pd.DataFrame([input_data], columns=columns)
+  
+  
+  # input_array = np.array(list(input_data.values())).reshape(1, -1)
+  
+  input_array_scaled = scaler.transform(input_df)
   
   prediction = model.predict(input_array_scaled)
   
